@@ -43,5 +43,19 @@ namespace IDistributedCacheRedis.Web.Controllers
             await _distributedCache.RemoveAsync("name");
             return View();
         }
+        public async Task<IActionResult> ImageCache()
+        {
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images", "erdal.jpg");
+            await _distributedCache.SetAsync("image", await System.IO.File.ReadAllBytesAsync(path), new DistributedCacheEntryOptions
+            {
+                AbsoluteExpiration = DateTime.Now.AddSeconds(120)
+            }); 
+            return View();
+        }
+        public async Task<IActionResult> ShowImage()
+        {
+            var imageByte = await _distributedCache.GetAsync("image");
+            return File(imageByte, "image/jpg");
+        }
     }
 }
